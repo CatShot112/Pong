@@ -39,7 +39,7 @@ int main() {
             if (Event.type == sf::Event::Closed) Window.close();
         }
     
-        Ball.move(ballX * ballSpeed, ballY * ballSpeed);
+        Ball.move(ballX * speed, ballY * speed);
     
         if (Ball.getPosition().x + 10 >= 800) {
             Player1Score++;
@@ -47,13 +47,13 @@ int main() {
             Ball.setPosition(400.0f, 300.0f);
         }
         else if (Ball.getPosition().x - 10 <= 0) {
-            Player2core++;
+            Player2Score++;
             speed += 0.05f;
             Ball.setPosition(400.0f, 300.0f);
         }
     
         if (Ball.getPosition().y + 10 >= 600 || Ball.getPosition().y - 10 <= 0) ballY = -ballY;
-        if (Ball.getGlobalBounds().intersects(Player1.getGlobalBounds()) || Ball.getGlobalBounds().intersects(Player2getGlobalBounds())) ballX = -ballX;
+        if (Ball.getGlobalBounds().intersects(Player1.getGlobalBounds()) || Ball.getGlobalBounds().intersects(Player2.getGlobalBounds())) ballX = -ballX;
     
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) Player1.move(0, -4 * speed);
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) Player1.move(0, 4 * speed);
