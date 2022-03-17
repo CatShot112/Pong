@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
     Ball.setPosition(400.0f, 400.0f);
     
     sf::Font Font;
-    Font.loadFromFile("Pong.ttf");
+    Font.loadFromFile("data/Pong.ttf");
     
     sf::Text Score("", Font);
     Score.setCharacterSize(64);
@@ -36,7 +36,9 @@ int main(int argc, char* argv[]) {
     
     float ballX = 3;
     float ballY = 5;
-    float speed = 1;
+    float p1Speed = 1;
+    float p2Speed = 1;
+    float currentSpeed = 1;
     
     unsigned int Player1Score = 0;
     unsigned int Player2Score = 0;
@@ -46,41 +48,75 @@ int main(int argc, char* argv[]) {
     while (Window.isOpen()) {
         sf::Event Event;
         while (Window.pollEvent(Event)) {
-            if (Event.type == sf::Event::Closed) Window.close();
+            if (Event.type == sf::Event::Closed)
+                Window.close();
         }
     
-        Ball.move(ballX * speed, ballY * speed);
+        Ball.move(ballX * currentSpeed, ballY * currentSpeed);
     
+        // Player 1 scored.
         if (Ball.getPosition().x + 10 >= 800) {
             Player1Score++;
-            speed += 0.05f;
+            p1Speed += 0.05f;
+            currentSpeed = p2Speed;
             Ball.setPosition(400.0f, 300.0f);
         }
+        // Player 2 scored.
         else if (Ball.getPosition().x - 10 <= 0) {
             Player2Score++;
-            speed += 0.05f;
+            p2Speed += 0.05f;
+            currentSpeed = p1Speed;
             Ball.setPosition(400.0f, 300.0f);
         }
     
-        if (Ball.getPosition().y + 10 >= 600 || Ball.getPosition().y - 10 <= 0) ballY = -ballY;
-        if (Ball.getGlobalBounds().intersects(Player1.getGlobalBounds()) || Ball.getGlobalBounds().intersects(Player2.getGlobalBounds())) ballX = -ballX;
+        // Bounce ball top/bottom.
+        if (Ball.getPosition().y + 10 >= 600 || Ball.getPosition().y - 10 <= 0)
+            ballY = -ballY;
+
+        // Bounce ball from player 1.
+        if (Ball.getGlobalBounds().intersects(Player1.getGlobalBounds())) {
+            ballX = -ballX;
+            currentSpeed = p2Speed;
+        }
+        // Bounce ball from player 2.
+        else if (Ball.getGlobalBounds().intersects(Player2.getGlobalBounds())) {
+            ballX = -ballX;
+            currentSpeed = p1Speed;
+        }
     
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) Player1.move(0, -4 * speed);
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) Player1.move(0, 4 * speed);
+        // Player 1 input.
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+            Player1.move(0, -4 * p1Speed);
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+            Player1.move(0, 4 * p1Speed);
     
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) Player2.move(0, -4 * speed);
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) Player2.move(0, 4 * speed);
+        // Player 2 input.
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+            Player2.move(0, -4 * p2Speed);
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+            Player2.move(0, 4 * p2Speed);
     
-        if (Player1.getPosition().y + 50 >= 600) Player1.setPosition(10, 550);
-        else if (Player1.getPosition().y - 50 <= 0) Player1.setPosition(10, 50);
+        // Player 1 bounds limit.
+        if (Player1.getPosition().y + 50 >= 600)
+            Player1.setPosition(10, 550);
+        else if (Player1.getPosition().y - 50 <= 0)
+            Player1.setPosition(10, 50);
     
-        if (Player2.getPosition().y + 50 >= 600) Player2.setPosition(790, 550);
-        else if (Player2.getPosition().y - 50 <= 0) Player2.setPosition(790, 50);
+        // Player 2 bounds limit.
+        if (Player2.getPosition().y + 50 >= 600)
+            Player2.setPosition(790, 550);
+        else if (Player2.getPosition().y - 50 <= 0)
+            Player2.setPosition(790, 50);
     
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) Window.close();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+            Window.close();
     
-        if (Player1Score < 10) sprintf_s(score, "  %d | %d", Player1Score, Player2Score);
-        else sprintf_s(score, " %d | %d", Player1Score, Player2Score);
+        // Update score.
+        if (Player1Score < 10)
+            sprintf_s(score, "  %d | %d", Player1Score, Player2Score);
+        else
+            sprintf_s(score, " %d | %d", Player1Score, Player2Score);
+
         Score.setString(score);
     
         Window.clear();
