@@ -1,0 +1,7 @@
+C++/.vs
+C++/*.vcxproj.filters
+C++/*.vcxproj.user
+C++/Out
+C++/bin
+C++/lib
+C++/headers
